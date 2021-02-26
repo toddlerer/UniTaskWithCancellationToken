@@ -1,0 +1,148 @@
+using UnityEngine;
+#if !UNITY_2019_1_OR_NEWER || UNITASK_UGUI_SUPPORT
+using UnityEngine.EventSystems;
+#endif
+using Cysharp.Threading.Tasks.Triggers;
+using Cysharp.Threading.Tasks;
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+    var empty = new []{ new Tuple<string,string>("", "") };
+
+    var triggers = new (string triggerName, string methodName, string returnType, string handlerInterface, Tuple<string, string>[] arguments)[]
+    {
+        ("AnimatorIK", "OnAnimatorIK", "int", null, new []{ new Tuple<string,string>("int", "layerIndex") }),
+        ("AnimatorMove", "OnAnimatorMove", "AsyncUnit", null, empty),
+        ("OnCanvasGroupChanged", "OnCanvasGroupChanged", "AsyncUnit", null, empty ),
+        ("CollisionEnter2D", "OnCollisionEnter2D", "Collision2D", null, new []{ new Tuple<string,string>("Collision2D", "coll") }),
+        ("CollisionExit2D", "OnCollisionExit2D", "Collision2D", null, new []{ new Tuple<string,string>("Collision2D", "coll") }),
+        ("CollisionStay2D", "OnCollisionStay2D", "Collision2D", null, new []{ new Tuple<string,string>("Collision2D", "coll") }),
+        ("CollisionEnter", "OnCollisionEnter", "Collision", null, new []{ new Tuple<string,string>("Collision", "coll") }),
+        ("CollisionExit", "OnCollisionExit", "Collision", null, new []{ new Tuple<string,string>("Collision", "coll") }),
+        ("CollisionStay", "OnCollisionStay", "Collision", null, new []{ new Tuple<string,string>("Collision", "coll") }),
+        ("Enable", "OnEnable", "AsyncUnit", null, empty),
+        ("Disable", "OnDisable", "AsyncUnit", null, empty),
+        ("JointBreak", "OnJointBreak", "float", null, new []{ new Tuple<string,string>("float", "breakForce") }),
+        ("JointBreak2D", "OnJointBreak2D", "Joint2D", null, new []{ new Tuple<string,string>("Joint2D", "brokenJoint") }),
+        ("Update", "Update", "AsyncUnit", null, empty),
+        ("FixedUpdate", "FixedUpdate", "AsyncUnit", null, empty),
+        ("LateUpdate", "LateUpdate", "AsyncUnit", null, empty),
+        
+        ("ParticleCollision", "OnParticleCollision", "GameObject", null, new []{ new Tuple<string,string>("GameObject", "other") }),
+        ("RectTransformDimensionsChange", "OnRectTransformDimensionsChange", "AsyncUnit", null, empty),
+        ("RectTransformRemoved", "OnRectTransformRemoved", "AsyncUnit", null, empty),
+        ("BeforeTransformParentChanged", "OnBeforeTransformParentChanged", "AsyncUnit", null, empty),
+        ("TransformParentChanged", "OnTransformParentChanged", "AsyncUnit", null, empty),
+        ("TransformChildrenChanged", "OnTransformChildrenChanged", "AsyncUnit", null, empty),
+        ("TriggerEnter2D", "OnTriggerEnter2D", "Collider2D", null, new []{ new Tuple<string,string>("Collider2D", "other") }),
+        ("TriggerExit2D", "OnTriggerExit2D", "Collider2D", null, new []{ new Tuple<string,string>("Collider2D", "other") }),
+        ("TriggerStay2D", "OnTriggerStay2D", "Collider2D", null, new []{ new Tuple<string,string>("Collider2D", "other") }),
+        ("TriggerEnter", "OnTriggerEnter", "Collider", null, new []{ new Tuple<string,string>("Collider", "other") }),
+        ("TriggerExit", "OnTriggerExit", "Collider", null, new []{ new Tuple<string,string>("Collider", "other") }),
+        ("TriggerStay", "OnTriggerStay", "Collider", null, new []{ new Tuple<string,string>("Collider", "other") }),
+        ("BecameInvisible", "OnBecameInvisible", "AsyncUnit", null, empty),
+        ("BecameVisible", "OnBecameVisible", "AsyncUnit", null, empty),
+        
+        // Mouse... #if !(UNITY_IPHONE || UNITY_ANDROID || UNITY_METRO)
+        ("MouseDown", "OnMouseDown", "AsyncUnit", null, empty),
+        ("MouseDrag", "OnMouseDrag", "AsyncUnit", null, empty),
+        ("MouseEnter", "OnMouseEnter", "AsyncUnit", null, empty),
+        ("MouseExit", "OnMouseExit", "AsyncUnit", null, empty),
+        ("MouseOver", "OnMouseOver", "AsyncUnit", null, empty),
+        ("MouseUp", "OnMouseUp", "AsyncUnit", null, empty),
+        ("MouseUpAsButton", "OnMouseUpAsButton", "AsyncUnit", null, empty),
+
+        // new in v2
+        ("ApplicationFocus", "OnApplicationFocus", "bool", null, new []{new Tuple<string,string>("bool", "hasFocus") }),
+        ("ApplicationPause", "OnApplicationPause", "bool", null, new []{new Tuple<string,string>("bool", "pauseStatus") }),
+        ("ApplicationQuit", "OnApplicationQuit", "AsyncUnit", null, empty),
+        ("AudioFilterRead", "OnAudioFilterRead", "(float[] data, int channels)", null, new[]{new Tuple<string,string>("float[]", "data"), new Tuple<string,string>("int", "channels")}),
+        ("ControllerColliderHit", "OnControllerColliderHit", "ControllerColliderHit", null, new[]{new Tuple<string,string>("ControllerColliderHit", "hit")}),
+        ("DrawGizmos", "OnDrawGizmos", "AsyncUnit", null, empty),
+        ("DrawGizmosSelected", "OnDrawGizmosSelected", "AsyncUnit", null, empty),
+        ("GUI", "OnGUI", "AsyncUnit", null, empty),
+        ("ParticleSystemStopped", "OnParticleSystemStopped", "AsyncUnit", null, empty),
+        ("ParticleTrigger", "OnParticleTrigger", "AsyncUnit", null, empty),
+        ("PostRender", "OnPostRender", "AsyncUnit", null, empty),
+        ("PreCull", "OnPreCull", "AsyncUnit", null, empty),
+        ("PreRender", "OnPreRender", "AsyncUnit", null, empty),
+        ("RenderImage", "OnRenderImage", "(RenderTexture source, RenderTexture destination)", null, new[]{new Tuple<string,string>("RenderTexture", "source"), new Tuple<string,string>("RenderTexture", "destination")}),
+        ("RenderObject", "OnRenderObject", "AsyncUnit", null, empty),
+        ("ServerInitialized", "OnServerInitialized", "AsyncUnit", null, empty),
+        ("Validate", "OnValidate", "AsyncUnit", null, empty),
+        ("WillRenderObject", "OnWillRenderObject", "AsyncUnit", null, empty),
+        ("Reset", "Reset", "AsyncUnit", null, empty),
+
+        // uGUI
+        ("BeginDrag", "OnBeginDrag", "PointerEventData", "IBeginDragHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("Cancel", "OnCancel", "BaseEventData", "ICancelHandler", new []{ new Tuple<string,string>("BaseEventData", "eventData") }),
+        ("Deselect", "OnDeselect", "BaseEventData", "IDeselectHandler", new []{ new Tuple<string,string>("BaseEventData", "eventData") }),
+        ("Drag", "OnDrag", "PointerEventData", "IDragHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("Drop", "OnDrop", "PointerEventData", "IDropHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("EndDrag", "OnEndDrag", "PointerEventData", "IEndDragHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("InitializePotentialDrag", "OnInitializePotentialDrag", "PointerEventData", "IInitializePotentialDragHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("Move", "OnMove", "AxisEventData", "IMoveHandler", new []{ new Tuple<string,string>("AxisEventData", "eventData") }),
+        ("PointerClick", "OnPointerClick", "PointerEventData", "IPointerClickHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("PointerDown", "OnPointerDown", "PointerEventData", "IPointerDownHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("PointerEnter", "OnPointerEnter", "PointerEventData", "IPointerEnterHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("PointerExit", "OnPointerExit", "PointerEventData", "IPointerExitHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("PointerUp", "OnPointerUp", "PointerEventData", "IPointerUpHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("Scroll", "OnScroll", "PointerEventData", "IScrollHandler", new []{ new Tuple<string,string>("PointerEventData", "eventData") }),
+        ("Select", "OnSelect", "BaseEventData", "ISelectHandler", new []{ new Tuple<string,string>("BaseEventData", "eventData") }),
+        ("Submit", "OnSubmit", "BaseEventData", "ISubmitHandler", new []{ new Tuple<string,string>("BaseEventData", "eventData") }),
+        ("UpdateSelected", "OnUpdateSelected", "BaseEventData", "IUpdateSelectedHandler", new []{ new Tuple<string,string>("BaseEventData", "eventData") }),
+
+        // 2019.3
+        ("ParticleUpdateJobScheduled", "OnParticleUpdateJobScheduled", "UnityEngine.ParticleSystemJobs.ParticleSystemJobData", null, new[]{new Tuple<string,string>("UnityEngine.ParticleSystemJobs.ParticleSystemJobData", "particles")}),
+
+        // Oneshot
+        // Awake, Start, Destroy
+    };
+
+    triggers = triggers.OrderBy(x => x.handlerInterface != null).ThenBy(x => x.handlerInterface != null ? x.handlerInterface : x.methodName).ToArray();
+
+    Func<string, string> ToUniTaskName = x => x == "AsyncUnit" ? "UniTask" : $"UniTask<{x}>";
+
+    Func<string, bool> IsParticleSystem = x => x == "ParticleUpdateJobScheduled";
+    Func<string, bool> IsMouseTrigger = x => x.StartsWith("Mouse");
+    Func<string, string> RequirePhysicsModule = x => (x.StartsWith("Collision") || x.StartsWith("Collider") || x.StartsWith("ControllerCollider") || x.StartsWith("Joint") || x.StartsWith("Trigger"))
+        ? (x.Contains("2D") ? "UNITASK_PHYSICS2D_SUPPORT" : "UNITASK_PHYSICS_SUPPORT") 
+        : null;
+    Func<string, bool> IsUguiSystem = x => x != null;
+#>
+
+namespace toddlerer.UniTaskWithCancellationToken
+{
+    public readonly partial struct UniTaskWithCancellationToken
+    {
+<# foreach(var t in triggers) { #>
+<# if(IsUguiSystem(t.handlerInterface)) { #>
+#if !UNITY_2019_1_OR_NEWER || UNITASK_UGUI_SUPPORT
+<# } #>
+<# if(IsParticleSystem(t.triggerName)) { #>
+#if UNITY_2019_3_OR_NEWER && (!UNITY_2019_1_OR_NEWER || UNITASK_PARTICLESYSTEM_SUPPORT)
+<# } #>
+<# if(IsMouseTrigger(t.triggerName)) { #>
+#if !(UNITY_IPHONE || UNITY_ANDROID || UNITY_METRO)
+<# } #>
+<# if(RequirePhysicsModule(t.triggerName) != null) { #>
+#if !UNITY_2019_1_OR_NEWER || <#= RequirePhysicsModule(t.triggerName) #>
+<# } #>
+        public <#= ToUniTaskName(t.returnType) #> Wrap(Async<#= t.triggerName #>Trigger async<#= t.triggerName #>Trigger)
+            => async<#= t.triggerName #>Trigger.<#= t.methodName #>Async(cancellationToken);
+<# if(IsUguiSystem(t.handlerInterface)) { #>
+#endif
+<# } #>
+<# if(RequirePhysicsModule(t.triggerName) != null) { #>
+#endif
+<# } #>
+<# if(IsParticleSystem(t.triggerName) || IsMouseTrigger(t.triggerName)) { #>
+#endif
+<# } #>
+<# } #>
+    }
+}
