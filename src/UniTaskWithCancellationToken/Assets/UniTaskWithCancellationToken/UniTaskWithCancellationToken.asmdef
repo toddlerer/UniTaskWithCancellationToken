@@ -13,6 +13,11 @@
     "versionDefines": [
         {
             "name": "com.cysharp.unitask",
+            "expression": "[2.2.0,3.0.0)",
+            "define": "UNITASK_VERSION_2_2__3_0"
+        },
+        {
+            "name": "com.cysharp.unitask",
             "expression": "[2.0,2.2)",
             "define": "UNITASK_VERSION_2_0__2_2"
         },

@@ -15,7 +15,7 @@ public class SandBox : MonoBehaviour
         var cancellationToken = cancellationTokenSource.Token;
         var uniTask = new UniTaskWithCancellationToken(cancellationToken);
 
-        await uniTask.OverWrap(uniTask.Delay(1).WithCancellation(cancellationToken));
+        await uniTask.OverWrap(uniTask.Delay(1).AttachExternalCancellation(cancellationToken));
         UniTask.Action(async (c) => { await UniTask.Yield(); }, cancellationToken);
         uniTask.Action(async (c) => { await uniTask.Yield(PlayerLoopTiming.Update); });
         await gameObject.GetAsyncDisableTrigger().OnDisableAsync(cancellationToken);
