@@ -1,9 +1,10 @@
 {
     "name": "jp.toddlerer.unitaskwithcancellationtoken",
     "displayName": "UniTaskWithCancellationToken",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "unity": "2018.4",
     "description": "Omit passing CancellationToken as an argument repeatedly in UniTask",
+    "documentationUrl": "https://github.com/toddlerer/UniTaskWithCancellationToken",
     "keywords": [
         "UniTask",
         "CancellationToken",

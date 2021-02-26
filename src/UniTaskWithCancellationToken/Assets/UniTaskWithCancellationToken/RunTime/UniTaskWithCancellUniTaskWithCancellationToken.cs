@@ -137,6 +137,14 @@ namespace toddlerer.UniTaskWithCancellationToken
         public UniTask<T> OverWrap<T>(UniTask<T> task)
             => task.WithCancellation(cancellationToken);
 #endif
+#if UNITASK_VERSION_2_2__3_0
+        /// <summary>Ignore task result when cancel raised first.</summary>
+        public UniTask OverWrap(UniTask task)
+            => task.AttachExternalCancellation(cancellationToken);
+        /// <summary>Ignore task result when cancel raised first.</summary>
+        public UniTask<T> OverWrap<T>(UniTask<T> task)
+            => task.AttachExternalCancellation(cancellationToken);
+#endif
         public UniTask<AsyncGPUReadbackRequest> Wrap(AsyncGPUReadbackRequest asyncOperation)
             => asyncOperation.WithCancellation(cancellationToken);
         public UniTask Wrap(AsyncOperation asyncOperation)
